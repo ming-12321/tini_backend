@@ -1,4 +1,4 @@
-FROM openjdk:21
+FROM eclipse-temurin:21-jdk
 
 ENV LC_ALL=C.UTF-8
 
