@@ -3,7 +3,7 @@ spring:
     name: tiniProjectBackend
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://127.0.0.1:3306/tini_db
+    url: jdbc:mariadb://mariadb-container:3306/tini_db
     username: tini
     password: T!N!2@2b
     hikari:
@@ -25,4 +25,4 @@ spring:
     defer-datasource-initialization: true
 
   mongodb:
-    uri: mongodb://tiniUser:TlNi0I$@localhost:27017/tini_mongodb?authSource=tini_mongodb
+    uri: mongodb://tiniUser:TlNi0I$@mongoDB:27017/tini_mongodb?authSource=tini_mongodb
