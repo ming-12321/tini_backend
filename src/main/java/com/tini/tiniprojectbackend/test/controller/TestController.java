@@ -1,5 +1,7 @@
-package com.tini.tiniprojectbackend;
+package com.tini.tiniprojectbackend.test.controller;
 
+import com.tini.tiniprojectbackend.common.exception.TiniErrorCode;
+import com.tini.tiniprojectbackend.common.exception.TiniException;
 import com.tini.tiniprojectbackend.test.service.TestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,16 @@ public class TestController {
   @GetMapping("/")
   public String root() {
     return "Backend is running";
+  }
+
+  @GetMapping("/test")
+  public ResponseEntity<HttpStatus> getStatus(String url) {
+
+    if(url.equals("test")) {
+      throw new TiniException(TiniErrorCode.USER_NOT_FOUND);
+    }
+
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @GetMapping("/android")
