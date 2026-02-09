@@ -54,21 +54,24 @@ public class UserService {
         .build();
   }
 
-//  /**
-//   *
-//   * @param userDTO
-//   * @param refreshToken
-//   */
-//  @Transactional
-//  public void updateRefresh(UserDTO userDTO, String refreshToken) {
-//    UserEntity userEntity = userRepository.getUserByUuid(userDTO.getUserUuid());
-//    if (userEntity == null) {
-//      throw new TiniException(TiniErrorCode.USER_NOT_FOUND);
-//    }
-//    if ((userEntity.getUserRefreshToken() == null) || (!userEntity.getUserRefreshToken()
-//        .equals(refreshToken))) {
-//      userEntity.updateRefresh(refreshToken);
-//    }
-//  }
+  /**
+   *
+   * @param userDTO
+   * @param refreshToken
+   */
+  @Transactional
+  public void updateRefresh(UserDTO userDTO, String refreshToken) {
+
+    UserEntity userEntity = userRepository.getUserByUuid(userDTO.getUserUuid());
+
+
+    if (userEntity == null) {
+      throw new TiniException(TiniErrorCode.USER_NOT_FOUND);
+    }
+    if ((userEntity.getToken().getRefreshToken() == null) || (!userEntity.getToken().getRefreshToken()
+        .equals(refreshToken))) {
+      userEntity.getToken().updateRefreshToken(refreshToken);
+    }
+  }
 
 }
