@@ -2,7 +2,6 @@ package com.tini.tiniprojectbackend.user.service;
 
 import com.tini.tiniprojectbackend.common.exception.TiniErrorCode;
 import com.tini.tiniprojectbackend.common.exception.TiniException;
-//import com.tini.tiniprojectbackend.common.util.JWTUtil;
 import com.tini.tiniprojectbackend.user.dto.UserDTO;
 import com.tini.tiniprojectbackend.user.entity.UserEntity;
 import com.tini.tiniprojectbackend.user.repository.UserRepository;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserService {
 
-//  private final JWTUtil jwtUtil;
   private final UserRepository userRepository;
 
   /**
@@ -44,7 +42,7 @@ public class UserService {
    */
   public UserDTO getUserByUserId(String userId) {
 
-    UserEntity userEntity = userRepository.getByUserId(userId);
+    UserEntity userEntity = userRepository.getUserByUserId(userId, null);
     if (userEntity == null) {
       throw new TiniException(TiniErrorCode.USER_NOT_FOUND);
     }
@@ -52,26 +50,6 @@ public class UserService {
     return UserDTO.toUserBuilder()
         .userEntity(userEntity)
         .build();
-  }
-
-  /**
-   *
-   * @param userDTO
-   * @param refreshToken
-   */
-  @Transactional
-  public void updateRefresh(UserDTO userDTO, String refreshToken) {
-
-    UserEntity userEntity = userRepository.getUserByUuid(userDTO.getUserUuid());
-
-
-    if (userEntity == null) {
-      throw new TiniException(TiniErrorCode.USER_NOT_FOUND);
-    }
-    if ((userEntity.getToken().getRefreshToken() == null) || (!userEntity.getToken().getRefreshToken()
-        .equals(refreshToken))) {
-      userEntity.getToken().updateRefreshToken(refreshToken);
-    }
   }
 
 }

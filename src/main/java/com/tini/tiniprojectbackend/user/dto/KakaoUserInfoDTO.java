@@ -31,7 +31,7 @@ public class KakaoUserInfoDTO {
   @AllArgsConstructor
   public static class KakaoProperties {
     @JsonProperty("nickname")
-    private String nickname;
+    private String nickName;
 
     @JsonProperty("profile_image")
     private String profileImage;
@@ -60,8 +60,11 @@ public class KakaoUserInfoDTO {
     @JsonProperty("age_range")
     private String ageRange;
 
+    @JsonProperty("birthyear")
+    private String birthYear;
+
     @JsonProperty("birthday")
-    private String birthday;
+    private String birthDay;
 
     @JsonProperty("gender")
     private String gender;

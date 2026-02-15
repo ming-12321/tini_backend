@@ -29,12 +29,12 @@ public class JWTUtil {
         .setSubject(user.getUserId()) // 사용자 식별자
         .claim("userUuid", user.getUserUuid())
         .claim("category", category) // access or refresh
-        .claim("name", user.getUserNick()) // 닉네임
-        .claim("role", user.isAdminYN() ? "ADMIN" : "USER") // 권한
+        .claim("name", user.getUserNick())
+        .claim("role", user.isAdminYN() ? "ADMIN" : "USER")
         .setExpiration(new Date(
             System.currentTimeMillis() +
                 (category.equals("access") ? accessExpiration : refreshExpiration)))
-        .signWith(SignatureAlgorithm.HS512, secretKey.getBytes()) // .getBytes() 중요!
+        .signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
         .compact();
   }
 

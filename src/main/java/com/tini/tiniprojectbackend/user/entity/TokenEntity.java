@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,8 +33,8 @@ public class TokenEntity {
   @Column(name = "REFRESH_TOKEN", length = 1000, nullable = false)
   private String refreshToken;
 
-  @Column(name = "REFRESH_EXPIRE_AT", nullable = false)
-  private LocalDateTime refreshExpireAt;
+  @Column(name = "REFRESH_EXPIRE_AT")
+  private Date refreshExpireAt;
 
   @Column(name = "REVOKED_AT")
   private LocalDateTime revokeAt;
@@ -45,7 +46,7 @@ public class TokenEntity {
   @OneToOne(mappedBy = "token", cascade = CascadeType.ALL)
   private UserEntity user;
 
-  @Builder(builderMethodName = "createDietBuilder", builderClassName = "createDietBuilder")
+  @Builder(builderMethodName = "createTokenBuilder", builderClassName = "createTokenBuilder")
   public TokenEntity(TokenDTO tokenDTO, UserDTO userDTO) {
     this.refreshToken = tokenDTO.getRefreshToken();
     this.refreshExpireAt = tokenDTO.getRefreshExpireAt();
