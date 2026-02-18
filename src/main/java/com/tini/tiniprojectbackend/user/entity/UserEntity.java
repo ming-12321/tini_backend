@@ -5,6 +5,7 @@ import com.tini.tiniprojectbackend.user.dto.UserDTO;
 import com.tini.tiniprojectbackend.user.enumeration.Gender;
 import com.tini.tiniprojectbackend.user.enumeration.SNS;
 import com.tini.tiniprojectbackend.user.enumeration.Subscribe;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -73,8 +74,9 @@ public class UserEntity {
   @Convert(converter = BooleanToInteger.class)
   private boolean adminYN;
 
-  @OneToOne(fetch = FetchType.LAZY)
+
   @JoinColumn(name = "TOKEN_ID")
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
   private TokenEntity token;
 
   @Builder(builderMethodName = "createUserBuilder", builderClassName = "createUserBuilder")

@@ -5,6 +5,7 @@ import com.tini.tiniprojectbackend.user.dto.UserDTO;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,7 +44,7 @@ public class TokenEntity {
   private String revokedReason;
 
   @JoinColumn(name = "USER_UUID")
-  @OneToOne(mappedBy = "token", cascade = CascadeType.ALL)
+  @OneToOne(fetch = FetchType.LAZY)
   private UserEntity user;
 
   @Builder(builderMethodName = "createTokenBuilder", builderClassName = "createTokenBuilder")
@@ -54,4 +55,5 @@ public class TokenEntity {
   }
 
   public void updateRefreshToken(String refreshToken) {this.refreshToken = refreshToken;}
+  public void updateRefreshExpireAt(Date refreshExpireAt) {this.refreshExpireAt = refreshExpireAt;}
 }
