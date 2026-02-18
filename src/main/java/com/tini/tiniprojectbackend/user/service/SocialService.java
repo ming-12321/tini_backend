@@ -134,14 +134,22 @@ public class SocialService {
   public void updateRefresh(String userUuid, String refreshToken) {
 
     TokenEntity tokenByUuid = tokenRepository.getTokenByUuid(userUuid);
+    UserEntity userByUuid = userRepository.getUserByUuid(userUuid);
 
     if (tokenByUuid == null) {
       Claims claims = jwtUtil.getClaimsFromToken(refreshToken);
       tokenRepository.save(TokenEntity.builder()
               .refreshToken(refreshToken)
               .refreshExpireAt(claims.getExpiration())
+              .user(userByUuid)
           .build());
     } else if ( !tokenByUuid.getRefreshToken().equals(refreshToken)) {
+      if(StringUtils.isNotBlank(refreshToken)) {
+        Claims claims = jwtUtil.getClaimsFromToken(refreshToken);
+        tokenByUuid.updateRefreshExpireAt(claims.getExpiration());
+      } else {
+        tokenByUuid.updateRefreshExpireAt(null);
+      }
       tokenByUuid.updateRefreshToken(refreshToken);
     }
   }
