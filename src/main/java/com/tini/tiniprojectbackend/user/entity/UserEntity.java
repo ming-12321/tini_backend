@@ -61,7 +61,7 @@ public class UserEntity {
 
   @Column(name = "PRINT_SUBSCRIBE")
   @Enumerated(EnumType.STRING)
-  private Subscribe  printSubscribe;
+  private Subscribe printSubscribe;
 
   @Column(name = "CONTINIOUS")
   private int continuous;

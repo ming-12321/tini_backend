@@ -8,7 +8,16 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum TiniErrorCode {
 
-  USER_NOT_FOUND(HttpStatus.NOT_FOUND,"U0001","해당 사용자를 찾을 수 없습니다.");
+  // USER
+  USER_NOT_FOUND(HttpStatus.NOT_FOUND,"U0001","해당 사용자를 찾을 수 없습니다."),
+  // DIARY
+  DIARY_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"D0001","다이어리를 생성하지 못했습니다."),
+  DIARY_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"D0002","다이어리 삭제에 실패했습니다."),
+  DIARY_NOT_FOUND(HttpStatus.NOT_FOUND,"D0003","다이어리 조회에 실패했습니다."),
+  DIARY_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"D0004","다이어리 수정에 실패했습니다."),
+  DIARY_MOVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"D0005","다이어리 이동에 실패했습니다."),
+  DIARY_DESK_FULL(HttpStatus.BAD_REQUEST,"D0020","책상에 더 이상 다이어리를 놓을 수 없습니다. (최대 10개)"),
+  DIARY_INVALID_SLOT(HttpStatus.BAD_REQUEST,"D0021","유효하지 않은 슬롯 위치입니다.");
 
 
   private final HttpStatus status;
