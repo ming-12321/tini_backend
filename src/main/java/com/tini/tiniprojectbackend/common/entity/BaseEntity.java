@@ -17,7 +17,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(value = {AuditingEntityListener.class})
-class BaseEntity {
+public class BaseEntity {
 
   @CreatedDate
   @Column(name = "CREATED_AT", updatable = false)
