@@ -71,7 +71,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 "/api/v1/tini/user/reset-password-by-email",
                 "/api/v1/tini/user/kakao/**",  // 카카오 소셜 로그인 경로 허용
                 "/api/v1/tini/user/google/**",  // 네이버 소셜 로그인 경로 허용
-                "/api/v1/tini/test/apple/**",  // 소셜 로그인 테스트 경로 허용
+                "/api/v1/tini/user/apple/**",  // 소셜 로그인 테스트 경로 허용
                 "/user/signup"
             ).permitAll()
 
