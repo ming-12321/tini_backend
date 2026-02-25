@@ -33,4 +33,14 @@ public class UserController {
   public ResponseEntity<TokenDTO> kakaoLogin(@RequestBody TokenDTO tokenDTO) {
     return new ResponseEntity<>( socialService.processKakaoLogin(tokenDTO),HttpStatus.OK);
   }
+
+  /**
+   *
+   * @param tokenDTO
+   * @return
+   */
+  @PostMapping("/google/login")
+  public ResponseEntity<TokenDTO> googleLogin(@RequestBody TokenDTO tokenDTO) {
+    return new ResponseEntity<>(socialService.processGoogleLogin(tokenDTO),HttpStatus.OK);
+  }
 }

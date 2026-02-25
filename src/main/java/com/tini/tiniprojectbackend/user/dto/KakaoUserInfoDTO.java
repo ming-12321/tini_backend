@@ -13,16 +13,16 @@ import lombok.NoArgsConstructor;
 public class KakaoUserInfoDTO {
 
   @JsonProperty("id")
-  private Long id;
+  protected Long id;
 
   @JsonProperty("connected_at")
-  private String connectedAt;
+  protected String connectedAt;
 
   @JsonProperty("properties")
-  private KakaoProperties properties;
+  protected KakaoProperties properties;
 
   @JsonProperty("kakao_account")
-  private KakaoAccount kakaoAccount;
+  protected KakaoAccount kakaoAccount;
 
 
   @Getter
@@ -31,13 +31,13 @@ public class KakaoUserInfoDTO {
   @AllArgsConstructor
   public static class KakaoProperties {
     @JsonProperty("nickname")
-    private String nickName;
+    protected String nickName;
 
     @JsonProperty("profile_image")
-    private String profileImage;
+    protected String profileImage;
 
     @JsonProperty("thumbnail_image")
-    private String thumbnailImage;
+    protected String thumbnailImage;
   }
 
   @Getter
@@ -46,27 +46,27 @@ public class KakaoUserInfoDTO {
   @AllArgsConstructor
   public static class KakaoAccount {
     @JsonProperty("email")
-    private String email;
+    protected String email;
 
     @JsonProperty("email_needs_agreement")
-    private Boolean emailNeedsAgreement;
+    protected Boolean emailNeedsAgreement;
 
     @JsonProperty("is_email_valid")
-    private Boolean isEmailValid;
+    protected Boolean isEmailValid;
 
     @JsonProperty("is_email_verified")
-    private Boolean isEmailVerified;
+    protected Boolean isEmailVerified;
 
     @JsonProperty("age_range")
-    private String ageRange;
+    protected String ageRange;
 
     @JsonProperty("birthyear")
-    private String birthYear;
+    protected String birthYear;
 
     @JsonProperty("birthday")
-    private String birthDay;
+    protected String birthDay;
 
     @JsonProperty("gender")
-    private String gender;
+    protected String gender;
   }
 }

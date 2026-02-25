@@ -3,6 +3,7 @@ package com.tini.tiniprojectbackend.user.service;
 import com.tini.tiniprojectbackend.common.exception.TiniErrorCode;
 import com.tini.tiniprojectbackend.common.exception.TiniException;
 import com.tini.tiniprojectbackend.common.util.JWTUtil;
+import com.tini.tiniprojectbackend.user.dto.GoogleUserInfoDTO;
 import com.tini.tiniprojectbackend.user.dto.KakaoUserInfoDTO;
 import com.tini.tiniprojectbackend.user.dto.TokenDTO;
 import com.tini.tiniprojectbackend.user.dto.UserDTO;
@@ -12,6 +13,7 @@ import com.tini.tiniprojectbackend.user.enumeration.Gender;
 import com.tini.tiniprojectbackend.user.enumeration.SNS;
 import com.tini.tiniprojectbackend.user.repository.TokenRepository;
 import com.tini.tiniprojectbackend.user.repository.UserRepository;
+import com.tini.tiniprojectbackend.user.util.GoogleOAuthClient;
 import com.tini.tiniprojectbackend.user.util.KakaoOAuthClient;
 import io.jsonwebtoken.Claims;
 import io.micrometer.common.util.StringUtils;
@@ -29,6 +31,7 @@ public class SocialService {
 
   private final JWTUtil jwtUtil;
   private final KakaoOAuthClient kakaoOAuthClient;
+  private final GoogleOAuthClient googleOAuthClient;
   private final UserRepository userRepository;
   private final TokenRepository tokenRepository;
 
@@ -126,7 +129,95 @@ public class SocialService {
   }
 
   /**
-   *
+   * 구글 로그인 / 회원가입
+   * @param tokenDTO
+   * @return
+   */
+  @Transactional
+  public TokenDTO processGoogleLogin(TokenDTO tokenDTO) {
+    try {
+
+      // 액세스 토큰으로 사용자 정보 조회
+      GoogleUserInfoDTO googleUserInfo = googleOAuthClient.getUserInfo(tokenDTO.getAccessToken());
+
+      if (googleUserInfo == null || googleUserInfo.getId() == null) {
+        throw new TiniException(TiniErrorCode.USER_NOT_FOUND);
+      }
+
+      // 소셜 사용자 email
+      String socialUserId = googleUserInfo.getEmail();
+
+      // 기존 사용자 확인
+      UserEntity existingUser = userRepository.getUserByUserId(socialUserId, SNS.GOOGLE);
+      UserDTO userDTO;
+
+      if (existingUser == null) {
+        // 신규 사용자 회원가입
+        registerGoogleUser(googleUserInfo);
+
+        UserEntity userEntity = userRepository.getUserByUserId(socialUserId, SNS.GOOGLE);
+
+        userDTO = UserDTO.toUserBuilder()
+            .userEntity(userEntity)
+            .build();
+
+      } else {
+        // 기존 사용자 로그인
+        userDTO = UserDTO.toUserBuilder()
+            .userEntity(existingUser)
+            .build();
+      }
+
+      // JWT 토큰 생성
+      String jwtAccessToken = jwtUtil.generateToken(userDTO, "access");
+      String jwtRefreshToken = jwtUtil.generateToken(userDTO, "refresh");
+
+      // 리프레시 토큰 업데이트
+      updateRefresh(userDTO.getUserUuid(), jwtRefreshToken);
+
+      return TokenDTO.builder()
+          .accessToken(jwtAccessToken)
+          .refreshToken(jwtRefreshToken)
+          .build();
+
+    } catch (Exception e) {
+      log.error("구글 로그인 처리 중 오류 발생", e);
+      throw new RuntimeException("구글 로그인 처리 중 오류 발생");
+    }
+  }
+
+  /**
+   * 구글 사용자 회원가입
+   * @param googleUserInfo
+   */
+  public void registerGoogleUser(GoogleUserInfoDTO googleUserInfo) {
+    try {
+      log.info("구글 사용자 회원가입 시작 - 소셜ID: {}", googleUserInfo.getEmail());
+
+      // UUID 생성
+      String uuid = UUID.randomUUID().toString();
+
+      UserEntity userEntity = UserEntity.builder()
+          .userUuid(uuid)
+          .userId(googleUserInfo.getEmail())
+          .userNick(googleUserInfo.getName() != null ? googleUserInfo.getName() : "구글사용자")
+          .sns(SNS.GOOGLE)
+          .profile(googleUserInfo.getPicture())
+          .continuous(0)
+          .deletionYN(false)
+          .adminYN(false)
+          .build();
+
+      userRepository.save(userEntity);
+      log.info("구글 사용자 회원가입 완료 - 사용자ID: {}", userEntity.getUserId());
+    } catch (Exception e) {
+      log.error("구글 사용자 회원가입 실패", e);
+      throw new RuntimeException("구글 사용자 회원가입 실패");
+    }
+  }
+
+  /**
+   * 업데이트 토큰
    * @param userUuid
    * @param refreshToken
    */
