@@ -15,7 +15,9 @@ public enum TiniErrorCode {
   DIARY_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"D0002","다이어리 삭제에 실패했습니다."),
   DIARY_NOT_FOUND(HttpStatus.NOT_FOUND,"D0003","다이어리 조회에 실패했습니다."),
   DIARY_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"D0004","다이어리 수정에 실패했습니다."),
-  DIARY_MOVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"D0005","다이어리 이동에 실패했습니다.");
+  DIARY_MOVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"D0005","다이어리 이동에 실패했습니다."),
+  // INDEX
+  INDEX_OVER_FLOW(HttpStatus.INTERNAL_SERVER_ERROR, "D0008","인덱스 개수가 넘어갔습니다.");
 
 
   private final HttpStatus status;

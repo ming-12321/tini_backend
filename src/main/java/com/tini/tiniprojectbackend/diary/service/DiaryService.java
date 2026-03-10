@@ -37,7 +37,6 @@ public class DiaryService {
         .orElseThrow(() -> new TiniException(TiniErrorCode.USER_NOT_FOUND));
 
     DiaryEntity diaryEntity = DiaryEntity.builder()
-        .diaryId(diaryDTO.getDiaryId())
         .name(diaryDTO.getName())
         .position(diaryDTO.getPosition())
         .rowIndex(diaryDTO.getRowIndex())

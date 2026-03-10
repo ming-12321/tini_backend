@@ -43,6 +43,9 @@ public class PageEntity extends BaseEntity {
   @JoinColumn(name = "DIARY_ID", nullable = false)
   private DiaryEntity diary;
 
+  @Column(name = "DIARY_PAGE", nullable = false)
+  private int diaryPage;
+
   @Column(name = "POSITION", nullable = false)
   @Enumerated(EnumType.STRING)
   private PageType pageType;
@@ -54,6 +57,7 @@ public class PageEntity extends BaseEntity {
     this.cover = pageDTO.getCoverThemeId() != 0
         ? CoverEntity.builder().coverThemeId(pageDTO.getCoverThemeId()).build() : null;
     this.diary = DiaryEntity.builder().diaryId(diaryDTO.getDiaryId()).build();
+    this.diaryPage = pageDTO.getDiaryPage();
     this.pageType = pageDTO.getPageType();
   }
 
