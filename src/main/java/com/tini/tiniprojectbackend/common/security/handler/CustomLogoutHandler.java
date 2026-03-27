@@ -5,6 +5,7 @@ import com.tini.tiniprojectbackend.user.dto.UserDTO;
 import com.tini.tiniprojectbackend.user.enumeration.SNS;
 import com.tini.tiniprojectbackend.user.service.SocialService;
 import com.tini.tiniprojectbackend.user.service.UserService;
+import com.tini.tiniprojectbackend.user.util.KakaoOAuthClient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class CustomLogoutHandler implements LogoutHandler {
   private final JWTUtil jwtUtil;
   private final UserService userService;
   private final SocialService socialService;
+  private final KakaoOAuthClient kakaoOAuthClient;
 
   @Override
   public void logout(HttpServletRequest request, HttpServletResponse response,
@@ -46,7 +48,7 @@ public class CustomLogoutHandler implements LogoutHandler {
           revokeSocialToken(userDTO);
 
           // 백엔드에서 refresh token 삭제
-          socialService.updateRefresh(userUuid, "");
+          socialService.updateRefresh(userUuid, "", "");
 
           // JSON 응답 형식으로 통일
           response.setStatus(HttpServletResponse.SC_OK);
@@ -81,12 +83,16 @@ public class CustomLogoutHandler implements LogoutHandler {
   // 소셜 플랫폼에서 토큰 해제
   private void revokeSocialToken(UserDTO userDTO) {
     try {
+      String socialAccessToken = socialService.getSocialAccessToken(userDTO.getUserUuid());
+
+      if (socialAccessToken == null || socialAccessToken.isBlank()) {
+        log.warn("소셜 액세스토큰이 없습니다 - 사용자: {}", userDTO.getUserUuid());
+        return;
+      }
+
       if (userDTO.getSns() == SNS.KAKAO) {
-        // 카카오 토큰 해제
-        String kakaoRevokeUrl = "https://kapi.kakao.com/v1/user/logout";
-        // TODO: 카카오 액세스 토큰으로 토큰 해제 API 호출
-        // 현재는 소셜 액세스 토큰을 저장하지 않아서 구현 불가
-        log.info("카카오 토큰 해제 요청 - 사용자: {}", userDTO.getUserUuid());
+        kakaoOAuthClient.logoutUser(socialAccessToken);
+        log.info("카카오 토큰 해제 완료 - 사용자: {}", userDTO.getUserUuid());
 
       } else if (userDTO.getSns() == SNS.GOOGLE) {
 

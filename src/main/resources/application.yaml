@@ -3,7 +3,8 @@ spring:
     name: tiniProjectBackend
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://mariadb-container:3306/tini_db
+#    url: jdbc:mariadb://mariadb-container:3306/tini_db
+    url: jdbc:mariadb://localhost:23306/tini_db
     username: tini
     password: T!N!2@2b
     hikari:
@@ -11,7 +12,7 @@ spring:
       maximum-pool-size: 24
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
@@ -25,7 +26,8 @@ spring:
     defer-datasource-initialization: true
 
   mongodb:
-    uri: mongodb://tiniUser:TlNi0I$@mongoDB:27017/tini_mongodb?authSource=tini_mongodb
+#    uri: mongodb://tiniUser:TlNi0I$@mongoDB:27017/tini_mongodb?authSource=tini_mongodb
+    uri: mongodb://tiniUser:TlNi0I$@localhost:27017/tini_mongodb?authSource=tini_mongodb
 
 
 jwt:
@@ -40,4 +42,5 @@ social:
     client-id: ${KAKAO_CLIENT_ID:e0ccd9a1366d275242dc304128c7ef03}
     client-secret: ${KAKAO_CLIENT_SECRET:58969640d74f895c291eee6cb53cfa89}
     redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:3000/auth/kakao/callback}
+    admin-key: ${KAKAO_ADMIN_KEY:}
 

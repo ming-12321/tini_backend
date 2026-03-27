@@ -32,5 +32,13 @@ public class UserRepositorySupportImpl implements UserRepositorySupport {
         .fetchOne();
   }
 
+  @Override
+  public UserEntity getUserBySocialId(String socialId, SNS sns) {
+    return queryFactory
+        .selectFrom(userEntity)
+        .where(userEntity.socialId.eq(socialId), eqSns(sns), userEntity.deletionYN.eq(false))
+        .fetchOne();
+  }
+
   private BooleanExpression eqSns(SNS sns) {return sns != null ? userEntity.sns.eq(sns) : null;}
 }

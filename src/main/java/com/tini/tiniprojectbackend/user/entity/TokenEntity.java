@@ -31,6 +31,9 @@ public class TokenEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int tokenId;
 
+  @Column(name = "ACCESS_TOKEN", length = 1000, nullable = false)
+  private String accessToken;
+
   @Column(name = "REFRESH_TOKEN", length = 1000, nullable = false)
   private String refreshToken;
 
@@ -49,11 +52,21 @@ public class TokenEntity {
 
   @Builder(builderMethodName = "createTokenBuilder", builderClassName = "createTokenBuilder")
   public TokenEntity(TokenDTO tokenDTO, UserDTO userDTO) {
+    this.accessToken = tokenDTO.getAccessToken();
     this.refreshToken = tokenDTO.getRefreshToken();
     this.refreshExpireAt = tokenDTO.getRefreshExpireAt();
     this.user = UserEntity.createUserBuilder().userDTO(userDTO).build();
   }
 
+  public void updateAccessToken(String accessToken) {this.accessToken = accessToken;}
   public void updateRefreshToken(String refreshToken) {this.refreshToken = refreshToken;}
   public void updateRefreshExpireAt(Date refreshExpireAt) {this.refreshExpireAt = refreshExpireAt;}
+
+  public void revokeToken(String reason) {
+    this.revokeAt = LocalDateTime.now();
+    this.revokedReason = reason;
+    this.accessToken = "";
+    this.refreshToken = "";
+    this.refreshExpireAt = null;
+  }
 }

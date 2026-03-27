@@ -17,6 +17,9 @@ public enum TiniErrorCode {
   DIARY_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"D0004","다이어리 수정에 실패했습니다."),
   DIARY_MOVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"D0005","다이어리 이동에 실패했습니다."),
 
+  USER_WITHDRAW_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"U0002","회원탈퇴 처리에 실패했습니다."),
+
+
   // 공지사항
   NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND,"N0001","공지사항 조회에 실패했습니다.");
 
