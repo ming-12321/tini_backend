@@ -26,8 +26,10 @@ public class UserDTO {
   protected String profile;
   protected String deviceUuid;
   protected boolean deletionYN;
+  protected LocalDateTime deletedAt;
   protected Subscribe appSubscribe;
   protected Subscribe  printSubscribe;
+  protected String socialId;
   protected int continuous;
   protected boolean adminYN;
 
@@ -42,8 +44,10 @@ public class UserDTO {
     this.profile = userEntity.getProfile();
     this.deviceUuid = userEntity.getDeviceUuid();
     this.deletionYN = userEntity.isDeletionYN();
+    this.deletedAt = userEntity.getDeletedAt();
     this.appSubscribe = userEntity.getAppSubscribe();
     this.printSubscribe = userEntity.getPrintSubscribe();
+    this.socialId = userEntity.getSocialId();
     this.continuous = userEntity.getContinuous();
     this.adminYN = userEntity.isAdminYN();
   }

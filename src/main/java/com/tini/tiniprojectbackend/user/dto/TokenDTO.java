@@ -28,6 +28,7 @@ public class TokenDTO {
   public TokenDTO(TokenEntity tokenEntity) {
     this.tokenId = tokenEntity.getTokenId();
     this.refreshToken = tokenEntity.getRefreshToken();
+    this.accessToken = tokenEntity.getAccessToken();
     this.refreshExpireAt = tokenEntity.getRefreshExpireAt();
     this.revokeAt = tokenEntity.getRevokeAt();
     this.revokedReason = tokenEntity.getRevokedReason();

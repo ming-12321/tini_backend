@@ -59,6 +59,9 @@ public class UserEntity {
   @Convert(converter = BooleanToInteger.class)
   private boolean deletionYN;
 
+  @Column(name = "DELETED_AT")
+  private LocalDateTime deletedAt;
+
   @Column(name = "APP_SUBSCRIBE")
   @Enumerated(EnumType.STRING)
   private Subscribe appSubscribe;
@@ -69,6 +72,9 @@ public class UserEntity {
 
   @Column(name = "CONTINIOUS")
   private int continuous;
+
+  @Column(name = "SOCIAL_ID")
+  private String socialId;
 
   @Column(name = "ADMIN_YN")
   @Convert(converter = BooleanToInteger.class)
@@ -90,9 +96,22 @@ public class UserEntity {
     this.profile = userDTO.getProfile() != null ? userDTO.getProfile() : null;
     this.deviceUuid = userDTO.getDeviceUuid();
     this.deletionYN = userDTO.isDeletionYN();
+    this.deletedAt = userDTO.getDeletedAt();
     this.appSubscribe = userDTO.getAppSubscribe();
     this.printSubscribe = userDTO.getPrintSubscribe();
     this.continuous = userDTO.getContinuous();
     this.adminYN = userDTO.isAdminYN();
+    this.socialId = userDTO.getSocialId();
+  }
+
+  public void withdraw() {
+    this.userId = "withdrawn_" + this.userUuid;
+    this.userNick = "탈퇴한 사용자";
+    this.userGender = null;
+    this.userBirthDate = null;
+    this.profile = null;
+    this.deviceUuid = null;
+    this.deletionYN = true;
+    this.deletedAt = LocalDateTime.now();
   }
 }

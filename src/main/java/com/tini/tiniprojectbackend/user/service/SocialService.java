@@ -82,8 +82,8 @@ public class SocialService {
         String jwtAccessToken = jwtUtil.generateToken(userDTO, "access");
         String jwtRefreshToken = jwtUtil.generateToken(userDTO, "refresh");
 
-        // 리프레시 토큰 업데이트
-        updateRefresh(userDTO.getUserUuid(), jwtRefreshToken);
+        // 토큰 업데이트 (소셜 액세스토큰 + JWT 리프레시토큰 저장)
+        updateRefresh(userDTO.getUserUuid(), tokenDTO.getAccessToken(), jwtRefreshToken);
 
         return TokenDTO.builder()
             .accessToken(jwtAccessToken)
@@ -114,6 +114,7 @@ public class SocialService {
           .userGender(changeUserGender(kakaoUserInfo.getKakaoAccount().getGender()))
           .userBirthDate(kakaoUserInfo.getKakaoAccount().getBirthDay() != null ? changeUserBirthday(kakaoUserInfo.getKakaoAccount().getBirthYear(), kakaoUserInfo.getKakaoAccount().getBirthDay()) : null)
           .sns(SNS.KAKAO)
+          .socialId(String.valueOf(kakaoUserInfo.getId()))
           .profile(kakaoUserInfo.getProperties().getProfileImage())
           .continuous(0)
           .deletionYN(false)
@@ -172,8 +173,8 @@ public class SocialService {
       String jwtAccessToken = jwtUtil.generateToken(userDTO, "access");
       String jwtRefreshToken = jwtUtil.generateToken(userDTO, "refresh");
 
-      // 리프레시 토큰 업데이트
-      updateRefresh(userDTO.getUserUuid(), jwtRefreshToken);
+      // 토큰 업데이트 (소셜 액세스토큰 + JWT 리프레시토큰 저장)
+      updateRefresh(userDTO.getUserUuid(), tokenDTO.getAccessToken(), jwtRefreshToken);
 
       return TokenDTO.builder()
           .accessToken(jwtAccessToken)
@@ -219,10 +220,11 @@ public class SocialService {
   /**
    * 업데이트 토큰
    * @param userUuid
+   * @param accessToken
    * @param refreshToken
    */
   @Transactional
-  public void updateRefresh(String userUuid, String refreshToken) {
+  public void updateRefresh(String userUuid, String accessToken, String refreshToken) {
 
     TokenEntity tokenByUuid = tokenRepository.getTokenByUuid(userUuid);
     UserEntity userByUuid = userRepository.getUserByUuid(userUuid);
@@ -230,11 +232,13 @@ public class SocialService {
     if (tokenByUuid == null) {
       Claims claims = jwtUtil.getClaimsFromToken(refreshToken);
       tokenRepository.save(TokenEntity.builder()
+              .accessToken(accessToken)
               .refreshToken(refreshToken)
               .refreshExpireAt(claims.getExpiration())
               .user(userByUuid)
           .build());
-    } else if ( !tokenByUuid.getRefreshToken().equals(refreshToken)) {
+    } else {
+      tokenByUuid.updateAccessToken(accessToken);
       if(StringUtils.isNotBlank(refreshToken)) {
         Claims claims = jwtUtil.getClaimsFromToken(refreshToken);
         tokenByUuid.updateRefreshExpireAt(claims.getExpiration());
@@ -243,6 +247,100 @@ public class SocialService {
       }
       tokenByUuid.updateRefreshToken(refreshToken);
     }
+  }
+
+  /**
+   * 소셜 액세스토큰 조회
+   * @param userUuid 사용자 UUID
+   * @return 소셜 액세스토큰
+   */
+  public String getSocialAccessToken(String userUuid) {
+    TokenEntity tokenEntity = tokenRepository.getTokenByUuid(userUuid);
+    return tokenEntity != null ? tokenEntity.getAccessToken() : null;
+  }
+
+  /**
+   * 카카오 회원탈퇴
+   * @param userUuid 사용자 UUID
+   */
+  @Transactional
+  public void withdrawUser(String userUuid) {
+    // 1. 사용자 조회 + 카카오 계정 확인
+    UserEntity user = userRepository.getUserByUuid(userUuid);
+    if (user == null) {
+      throw new TiniException(TiniErrorCode.USER_NOT_FOUND);
+    }
+    if (user.getSns() != SNS.KAKAO) {
+      throw new TiniException(TiniErrorCode.USER_WITHDRAW_FAILED);
+    }
+
+    // 2. 카카오 연결 끊기 (1차: accessToken, 2차: adminKey)
+    TokenEntity tokenEntity = tokenRepository.getTokenByUuid(userUuid);
+    String socialAccessToken = tokenEntity != null ? tokenEntity.getAccessToken() : null;
+
+    boolean unlinkSuccess = false;
+
+    // 1차: 액세스토큰으로 unlink 시도
+    if (socialAccessToken != null && !socialAccessToken.isBlank()) {
+      try {
+        kakaoOAuthClient.unlinkUser(socialAccessToken);
+        unlinkSuccess = true;
+        log.info("카카오 연결 끊기 성공 (accessToken) - userUuid: {}", userUuid);
+      } catch (Exception e) {
+        log.warn("카카오 연결 끊기 실패 (accessToken) - userUuid: {}, 2차 시도 진행", userUuid);
+      }
+    }
+
+    // 2차: 관리자 키로 unlink 시도
+    if (!unlinkSuccess) {
+      String kakaoUserId = user.getSocialId();
+      if (kakaoUserId == null || kakaoUserId.isBlank()) {
+        log.error("카카오 사용자 ID가 없어 관리자 키 unlink 불가 - userUuid: {}", userUuid);
+        throw new TiniException(TiniErrorCode.USER_WITHDRAW_FAILED);
+      }
+      try {
+        kakaoOAuthClient.unlinkByAdmin(kakaoUserId);
+        unlinkSuccess = true;
+        log.info("카카오 연결 끊기 성공 (adminKey) - userUuid: {}", userUuid);
+      } catch (Exception e) {
+        log.error("카카오 연결 끊기 실패 (adminKey) - userUuid: {}", userUuid, e);
+        throw new TiniException(TiniErrorCode.USER_WITHDRAW_FAILED);
+      }
+    }
+
+    // 3. 토큰 revoke
+    if (tokenEntity != null) {
+      tokenEntity.revokeToken("회원탈퇴");
+    }
+
+    // 4. 개인정보 익명화 + soft delete
+    user.withdraw();
+
+    log.info("회원탈퇴 완료 - userUuid: {}", userUuid);
+  }
+
+  /**
+   * 카카오 webhook unlink 처리
+   * @param kakaoUserId 카카오 사용자 ID
+   */
+  @Transactional
+  public void handleKakaoUnlinkWebhook(String kakaoUserId) {
+    UserEntity user = userRepository.getUserBySocialId(kakaoUserId, SNS.KAKAO);
+    if (user == null) {
+      log.warn("카카오 webhook unlink - 사용자를 찾을 수 없음: kakaoUserId={}", kakaoUserId);
+      return;
+    }
+
+    // 토큰 revoke
+    TokenEntity tokenEntity = tokenRepository.getTokenByUuid(user.getUserUuid());
+    if (tokenEntity != null) {
+      tokenEntity.revokeToken("카카오 webhook unlink");
+    }
+
+    // 개인정보 익명화 + soft delete
+    user.withdraw();
+
+    log.info("카카오 webhook unlink 처리 완료 - kakaoUserId: {}, userUuid: {}", kakaoUserId, user.getUserUuid());
   }
 
   /**
