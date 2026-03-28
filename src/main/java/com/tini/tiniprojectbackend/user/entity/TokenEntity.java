@@ -31,7 +31,7 @@ public class TokenEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int tokenId;
 
-  @Column(name = "ACCESS_TOKEN", length = 1000, nullable = false)
+  @Column(name = "ACCESS_TOKEN", length = 2000, nullable = false)
   private String accessToken;
 
   @Column(name = "REFRESH_TOKEN", length = 1000, nullable = false)
