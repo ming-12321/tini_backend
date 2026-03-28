@@ -203,6 +203,7 @@ public class SocialService {
           .userId(googleUserInfo.getEmail())
           .userNick(googleUserInfo.getName() != null ? googleUserInfo.getName() : "구글사용자")
           .sns(SNS.GOOGLE)
+          .socialId(googleUserInfo.getId())
           .profile(googleUserInfo.getPicture())
           .continuous(0)
           .deletionYN(false)
@@ -260,24 +261,44 @@ public class SocialService {
   }
 
   /**
-   * 카카오 회원탈퇴
+   * 회원탈퇴 (카카오/구글 공통)
    * @param userUuid 사용자 UUID
    */
   @Transactional
   public void withdrawUser(String userUuid) {
-    // 1. 사용자 조회 + 카카오 계정 확인
+    // 1. 사용자 조회
     UserEntity user = userRepository.getUserByUuid(userUuid);
     if (user == null) {
       throw new TiniException(TiniErrorCode.USER_NOT_FOUND);
     }
-    if (user.getSns() != SNS.KAKAO) {
+
+    // 2. 소셜 플랫폼별 연결 끊기
+    TokenEntity tokenEntity = tokenRepository.getTokenByUuid(userUuid);
+
+    if (user.getSns() == SNS.KAKAO) {
+      unlinkKakao(userUuid, user, tokenEntity);
+    } else if (user.getSns() == SNS.GOOGLE) {
+      log.info("구글 회원탈퇴 - 소셜 연결 끊기 생략 (토큰 자동 만료) - userUuid: {}", userUuid);
+    } else {
       throw new TiniException(TiniErrorCode.USER_WITHDRAW_FAILED);
     }
 
-    // 2. 카카오 연결 끊기 (1차: accessToken, 2차: adminKey)
-    TokenEntity tokenEntity = tokenRepository.getTokenByUuid(userUuid);
-    String socialAccessToken = tokenEntity != null ? tokenEntity.getAccessToken() : null;
+    // 3. 토큰 revoke
+    if (tokenEntity != null) {
+      tokenEntity.revokeToken("회원탈퇴");
+    }
 
+    // 4. 개인정보 익명화 + soft delete
+    user.withdraw();
+
+    log.info("회원탈퇴 완료 - userUuid: {}, sns: {}", userUuid, user.getSns());
+  }
+
+  /**
+   * 카카오 연결 끊기 (1차: accessToken, 2차: adminKey)
+   */
+  private void unlinkKakao(String userUuid, UserEntity user, TokenEntity tokenEntity) {
+    String socialAccessToken = tokenEntity != null ? tokenEntity.getAccessToken() : null;
     boolean unlinkSuccess = false;
 
     // 1차: 액세스토큰으로 unlink 시도
@@ -300,23 +321,12 @@ public class SocialService {
       }
       try {
         kakaoOAuthClient.unlinkByAdmin(kakaoUserId);
-        unlinkSuccess = true;
         log.info("카카오 연결 끊기 성공 (adminKey) - userUuid: {}", userUuid);
       } catch (Exception e) {
         log.error("카카오 연결 끊기 실패 (adminKey) - userUuid: {}", userUuid, e);
         throw new TiniException(TiniErrorCode.USER_WITHDRAW_FAILED);
       }
     }
-
-    // 3. 토큰 revoke
-    if (tokenEntity != null) {
-      tokenEntity.revokeToken("회원탈퇴");
-    }
-
-    // 4. 개인정보 익명화 + soft delete
-    user.withdraw();
-
-    log.info("회원탈퇴 완료 - userUuid: {}", userUuid);
   }
 
   /**
