@@ -1,6 +1,7 @@
 package com.tini.tiniprojectbackend.user.entity;
 
 import com.tini.tiniprojectbackend.common.config.BooleanToInteger;
+import com.tini.tiniprojectbackend.setting.entity.SettingEntity;
 import com.tini.tiniprojectbackend.user.dto.UserDTO;
 import com.tini.tiniprojectbackend.user.enumeration.Gender;
 import com.tini.tiniprojectbackend.user.enumeration.SNS;
@@ -14,6 +15,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -74,10 +76,12 @@ public class UserEntity {
   @Convert(converter = BooleanToInteger.class)
   private boolean adminYN;
 
-
   @JoinColumn(name = "TOKEN_ID")
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
   private TokenEntity token;
+
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+  private SettingEntity setting;
 
   @Builder(builderMethodName = "createUserBuilder", builderClassName = "createUserBuilder")
   public UserEntity(UserDTO userDTO) {
