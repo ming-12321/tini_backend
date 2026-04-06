@@ -34,7 +34,7 @@ public class JWTFilter extends OncePerRequestFilter {
         url.startsWith("/api/v1/tini/user/google/") ||  // 네이버 소셜 로그인 경로
         url.startsWith("/api-test") ||
         url.startsWith("/v3/api-docs") ||
-        url.equals("/reissue") ||
+        url.equals("/api/v1/tini/reissue") ||
         url.endsWith(".png") ||
         url.startsWith("/js/") ||
         url.startsWith("/css/") ||
