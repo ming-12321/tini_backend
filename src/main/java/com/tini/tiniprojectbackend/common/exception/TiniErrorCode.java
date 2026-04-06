@@ -19,6 +19,11 @@ public enum TiniErrorCode {
 
   USER_WITHDRAW_FAILED(HttpStatus.INTERNAL_SERVER_ERROR,"U0002","회원탈퇴 처리에 실패했습니다."),
 
+  // TOKEN
+  TOKEN_INVALID(HttpStatus.UNAUTHORIZED,"T0001","유효하지 않은 토큰입니다."),
+  TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED,"T0002","만료된 토큰입니다."),
+  TOKEN_REISSUE_FAILED(HttpStatus.UNAUTHORIZED,"T0003","토큰 재발급에 실패했습니다."),
+
 
   // 공지사항
   NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND,"N0001","공지사항 조회에 실패했습니다.");
