@@ -31,7 +31,7 @@ public class SettingController {
    * 앱 설정 업데이트
    * @param settingDTO 업데이트할 앱 설정
    */
-  @PostMapping()
+  @PostMapping
   public ResponseEntity<HttpStatus> updateSetting(@RequestBody SettingDTO settingDTO) {
     settingService.updateSetting(settingDTO);
     return new ResponseEntity<>(HttpStatus.OK);
