@@ -11,17 +11,14 @@ spring:
       maximum-pool-size: 24
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
         default_batch_fetch_size: 100
         format_sql: true
-        dialect: org.hibernate.dialect.MySQLDialect
     show_sql: true
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL8Dialect
     defer-datasource-initialization: true
 
   mongodb:
@@ -31,7 +28,7 @@ spring:
 jwt:
   secret: vrDt6Hhffv9gPPEEHDBVhxY4W+gf//bxDgVljRr/+8z1ZxqEdgTmDDZ/UIquJuWQdZmJ8mz/DuzLF/pmcMFaqw==
   access_expiration: 1800000
-  refresh_expiration: 84600000
+  refresh_expiration: 7776000000
 
 # 소셜 로그인 API 설정
 social:
@@ -40,4 +37,5 @@ social:
     client-id: ${KAKAO_CLIENT_ID:e0ccd9a1366d275242dc304128c7ef03}
     client-secret: ${KAKAO_CLIENT_SECRET:58969640d74f895c291eee6cb53cfa89}
     redirect-uri: ${KAKAO_REDIRECT_URI:http://localhost:3000/auth/kakao/callback}
+    admin-key: ${KAKAO_ADMIN_KEY:}
 

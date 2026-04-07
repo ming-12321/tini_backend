@@ -7,4 +7,5 @@ public interface UserRepositorySupport {
 
   UserEntity getUserByUuid(String userUuid);
   UserEntity getUserByUserId(String userId, SNS sns);
+  UserEntity getUserBySocialId(String socialId, SNS sns);
 }

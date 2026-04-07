@@ -70,13 +70,15 @@ public class SecurityConfig implements WebMvcConfigurer {
                 "/api/v1/tini/user/confirm-verification-code",
                 "/api/v1/tini/user/reset-password-by-email",
                 "/api/v1/tini/user/kakao/**",  // 카카오 소셜 로그인 경로 허용
-                "/api/v1/tini/user/google/**",  // 네이버 소셜 로그인 경로 허용
-                "/api/v1/tini/user/apple/**",  // 소셜 로그인 테스트 경로 허용
+                "/api/v1/tini/user/google/**",  // 구글 소셜 로그인 경로 허용
+                "/api/v1/tini/user/apple/**",  // 애플 소셜 로그인 경로 허용
+                "/api/v1/tini/webhook/**",  // 소셜 webhook 경로 허용
                 "/user/signup"
             ).permitAll()
 
             // 인증 필요
             .requestMatchers("/api/v1/tini/logout").authenticated()
+            .requestMatchers(HttpMethod.DELETE, "/api/v1/tini/user/withdraw").authenticated()
 
             // 관리자 권한 필요
             .requestMatchers("/admin/**").hasRole("ADMIN")

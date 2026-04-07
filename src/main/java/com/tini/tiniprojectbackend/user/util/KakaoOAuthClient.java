@@ -25,6 +25,9 @@ public class KakaoOAuthClient {
   @Value("${social.kakao.api-url:https://kapi.kakao.com}")
   private String kakaoApiUrl;
 
+  @Value("${social.kakao.admin-key:}")
+  private String adminKey;
+
 //  @Value("${social.kakao.client-id}")
 //  private String clientId;
 //
@@ -91,6 +94,73 @@ public class KakaoOAuthClient {
     } catch (Exception e) {
       log.error("카카오 사용자 정보 조회 실패: {}", e.getMessage());
       throw new RuntimeException("카카오 사용자 정보 조회에 실패했습니다.", e);
+    }
+  }
+
+  /**
+   * 카카오 로그아웃 (토큰 해제)
+   * @param accessToken 카카오 액세스 토큰
+   */
+  public void logoutUser(String accessToken) {
+    try {
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Authorization", "Bearer " + accessToken);
+
+      HttpEntity<String> entity = new HttpEntity<>(headers);
+
+      String url = kakaoApiUrl + "/v1/user/logout";
+      restTemplate.exchange(url, HttpMethod.POST, entity, Object.class);
+
+      log.info("카카오 로그아웃 성공");
+    } catch (Exception e) {
+      log.error("카카오 로그아웃 실패: {}", e.getMessage());
+    }
+  }
+
+  /**
+   * 카카오 연결 끊기 (회원탈퇴)
+   * @param accessToken 카카오 액세스 토큰
+   */
+  public void unlinkUser(String accessToken) {
+    try {
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Authorization", "Bearer " + accessToken);
+
+      HttpEntity<String> entity = new HttpEntity<>(headers);
+
+      String url = kakaoApiUrl + "/v1/user/unlink";
+      restTemplate.exchange(url, HttpMethod.POST, entity, Object.class);
+
+      log.info("카카오 연결 끊기 성공");
+    } catch (Exception e) {
+      log.error("카카오 연결 끊기 실패: {}", e.getMessage());
+      throw new RuntimeException("카카오 연결 끊기에 실패했습니다.", e);
+    }
+  }
+
+  /**
+   * 카카오 연결 끊기 (관리자 키 사용 - fallback)
+   * @param kakaoUserId 카카오 사용자 ID
+   */
+  public void unlinkByAdmin(String kakaoUserId) {
+    try {
+      HttpHeaders headers = new HttpHeaders();
+      headers.set("Authorization", "KakaoAK " + adminKey);
+      headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+      MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+      body.add("target_id_type", "user_id");
+      body.add("target_id", kakaoUserId);
+
+      HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+
+      String url = kakaoApiUrl + "/v1/user/unlink";
+      restTemplate.exchange(url, HttpMethod.POST, entity, Object.class);
+
+      log.info("카카오 관리자 키로 연결 끊기 성공 - kakaoUserId: {}", kakaoUserId);
+    } catch (Exception e) {
+      log.error("카카오 관리자 키로 연결 끊기 실패 - kakaoUserId: {}", kakaoUserId, e);
+      throw new RuntimeException("카카오 관리자 키로 연결 끊기에 실패했습니다.", e);
     }
   }
 
