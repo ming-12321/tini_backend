@@ -5,6 +5,7 @@ import com.tini.tiniprojectbackend.diary.dto.DiaryDTO;
 import com.tini.tiniprojectbackend.diary.enumeration.Position;
 import com.tini.tiniprojectbackend.user.dto.UserDTO;
 import com.tini.tiniprojectbackend.user.entity.UserEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +16,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,6 +54,12 @@ public class DiaryEntity extends BaseEntity {
 
   @Column(name = "IS_MAIN", nullable = false)
   private int isMain;
+
+  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+  private List<IndexEntity>  indexEntities;
+
+  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+  private List<BookmarkEntity>  bookmarkEntities;
 
   @Builder(builderMethodName = "createDiaryBuilder", builderClassName = "createDiaryBuilder")
   public DiaryEntity(DiaryDTO diaryDTO, UserDTO userDTO) {

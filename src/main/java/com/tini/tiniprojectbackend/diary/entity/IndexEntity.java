@@ -1,8 +1,10 @@
 package com.tini.tiniprojectbackend.diary.entity;
 
 import com.tini.tiniprojectbackend.common.entity.BaseEntity;
+import com.tini.tiniprojectbackend.diary.dto.DiaryDTO;
 import com.tini.tiniprojectbackend.diary.dto.IndexDTO;
 import com.tini.tiniprojectbackend.diary.dto.PageDTO;
+import com.tini.tiniprojectbackend.diary.entity.DiaryEntity.createDiaryBuilder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -28,13 +30,16 @@ public class IndexEntity extends BaseEntity {
   @Column(name = "INDEX_ID")
   private int indexId;
 
+  @Column(name = "PAGE")
+  private int page;
+
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "PAGE_ID")
-  private PageEntity page;
+  private DiaryEntity diary;
 
   @Builder(builderMethodName = "createIndexBuilder", builderClassName = "createIndexBuilder")
-  public IndexEntity(IndexDTO indexDTO, PageDTO pageDTO) {
-    this.page = pageDTO.getPageId() != 0
-        ? PageEntity.builder().pageId(pageDTO.getPageId()).build() : null;
+  public IndexEntity(IndexDTO indexDTO) {
+    this.indexId = indexDTO.getIndexId();
+    this.page = indexDTO.getPage();
+    this.diary = indexDTO.getDiary() != null ? DiaryEntity.createDiaryBuilder().diaryDTO(indexDTO.getDiary()).build() : null;
   }
 }

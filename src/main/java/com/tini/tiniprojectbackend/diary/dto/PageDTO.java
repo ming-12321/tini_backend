@@ -18,6 +18,7 @@ public class PageDTO extends BaseDTO {
   protected int innerThemeId;
   protected int coverThemeId;
   protected int diaryId;
+  protected int diaryPage;
   protected PageType pageType;
 
   public static PageDTO from(PageEntity pageEntity) {
@@ -26,6 +27,7 @@ public class PageDTO extends BaseDTO {
         .innerThemeId(pageEntity.getInner() != null ? pageEntity.getInner().getInnerThemeId() : 0)
         .coverThemeId(pageEntity.getCover() != null ? pageEntity.getCover().getCoverThemeId() : 0)
         .diaryId(pageEntity.getDiary().getDiaryId())
+        .diaryPage(pageEntity.getDiaryPage())
         .pageType(pageEntity.getPageType())
         .createdAt(pageEntity.getCreatedAt())
         .updatedAt(pageEntity.getUpdatedAt())

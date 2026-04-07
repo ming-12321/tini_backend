@@ -1,7 +1,9 @@
 package com.tini.tiniprojectbackend.diary.controller;
 
 import com.tini.tiniprojectbackend.diary.dto.DiaryDTO;
+import com.tini.tiniprojectbackend.diary.dto.IndexDTO;
 import com.tini.tiniprojectbackend.diary.service.DiaryService;
+import com.tini.tiniprojectbackend.diary.service.IndexService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DiaryController {
 
   private final DiaryService diaryService;
+  private final IndexService indexService;
 
   /**
    * 다이어리 생성
@@ -30,7 +33,7 @@ public class DiaryController {
    */
   @PostMapping
   public ResponseEntity<DiaryDTO> createDiary(@RequestBody DiaryDTO diaryDTO) {
-    return new ResponseEntity<>(diaryService.createDiary(diaryDTO), HttpStatus.CREATED);
+    return new ResponseEntity<>(diaryService.createDiary(diaryDTO), HttpStatus.OK);
   }
 
   /**
@@ -86,4 +89,44 @@ public class DiaryController {
     return new ResponseEntity<>(diaryService.deleteDiary(diaryId, userUuid), HttpStatus.OK);
   }
 
+  /**
+   * 인덱스 리스트 조회
+   * @param diaryId 다이어리 아이디
+   * @return 다이어리 별 인덱스 리스트
+   */
+  @GetMapping("/index/{diaryId}")
+  public ResponseEntity<List<IndexDTO>> getIndexList(@PathVariable int diaryId) {
+    return new ResponseEntity<>(indexService.getIndexList(diaryId), HttpStatus.OK);
+  }
+
+  /**
+   * 인덱스 생성
+   * @param indexDTO 생성할 인덱스 DTO
+   */
+  @PostMapping("/index/create")
+  public ResponseEntity<HttpStatus> createIndex(@RequestBody IndexDTO indexDTO) {
+    indexService.createIndex(indexDTO);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * 인덱스 수정
+   * @param diaryId 다이어리 아이디
+   * @param indexDTOList 인덱스 리스트
+   */
+  @PostMapping("/index/update/{diaryId}")
+  public ResponseEntity<HttpStatus> updateIndex(@PathVariable int diaryId, @RequestBody List<IndexDTO> indexDTOList) {
+    indexService.updateIndex(diaryId, indexDTOList);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * 인덱스 삭제
+   * @param indexId 인덱스 아이디
+   */
+  @DeleteMapping("/{indexId}")
+  public ResponseEntity<HttpStatus> deleteIndex(@PathVariable int indexId) {
+    indexService.deleteIndex(indexId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }
