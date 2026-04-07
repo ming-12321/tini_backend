@@ -3,6 +3,13 @@ package com.tini.tiniprojectbackend.user.service;
 import com.tini.tiniprojectbackend.common.exception.TiniErrorCode;
 import com.tini.tiniprojectbackend.common.exception.TiniException;
 import com.tini.tiniprojectbackend.common.util.JWTUtil;
+import com.tini.tiniprojectbackend.setting.entity.SettingEntity;
+import com.tini.tiniprojectbackend.setting.enumeration.CalTime;
+import com.tini.tiniprojectbackend.setting.enumeration.DayTime;
+import com.tini.tiniprojectbackend.setting.enumeration.Language;
+import com.tini.tiniprojectbackend.setting.enumeration.Mode;
+import com.tini.tiniprojectbackend.setting.enumeration.WeekTime;
+import com.tini.tiniprojectbackend.setting.repository.SettingRepository;
 import com.tini.tiniprojectbackend.user.dto.GoogleUserInfoDTO;
 import com.tini.tiniprojectbackend.user.dto.KakaoUserInfoDTO;
 import com.tini.tiniprojectbackend.user.dto.TokenDTO;
@@ -34,6 +41,7 @@ public class SocialService {
   private final GoogleOAuthClient googleOAuthClient;
   private final UserRepository userRepository;
   private final TokenRepository tokenRepository;
+  private final SettingRepository settingRepository;
 
   /**
    * 카카오 로그인 / 회원가입
@@ -121,8 +129,22 @@ public class SocialService {
           .adminYN(false)
           .build();
 
+      // 사용자 정보 저장
       userRepository.save(userEntity);
+
+      // 사용자 최초 설정 저장
+      settingRepository.save(SettingEntity.builder()
+              .user(userEntity)
+              .mode(Mode.LIGHT)
+              .alertYN(true)
+              .calTime(CalTime.NU)
+              .dayTime(DayTime.XII)
+              .language(Language.KO)
+              .weekTime(WeekTime.EN)
+          .build());
+
       log.info("카카오 사용자 회원가입 완료 - 사용자ID: {}", userEntity.getUserId());
+
     } catch (Exception e) {
       log.error("카카오 사용자 회원가입 실패", e);
       throw new RuntimeException("카카오 사용자 회원가입 실패");
@@ -210,7 +232,20 @@ public class SocialService {
           .adminYN(false)
           .build();
 
+      // 사용자 정보 저장
       userRepository.save(userEntity);
+
+      // 사용자 최초 설정 저장
+      settingRepository.save(SettingEntity.builder()
+          .user(userEntity)
+          .mode(Mode.LIGHT)
+          .alertYN(true)
+          .calTime(CalTime.NU)
+          .dayTime(DayTime.XII)
+          .language(Language.KO)
+          .weekTime(WeekTime.EN)
+          .build());
+
       log.info("구글 사용자 회원가입 완료 - 사용자ID: {}", userEntity.getUserId());
     } catch (Exception e) {
       log.error("구글 사용자 회원가입 실패", e);
