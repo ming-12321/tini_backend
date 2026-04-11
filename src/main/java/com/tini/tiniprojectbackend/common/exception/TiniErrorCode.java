@@ -28,8 +28,10 @@ public enum TiniErrorCode {
 
 
   // 공지사항
-  NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND,"N0001","공지사항 조회에 실패했습니다.");
+  NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND,"N0001","공지사항 조회에 실패했습니다."),
 
+  // 테마
+  THEME_NOT_FOUND(HttpStatus.NOT_FOUND,"P0001","해당 페이지의 테마 조회에 실패했습니다.");
 
   private final HttpStatus status;
   private final String code;

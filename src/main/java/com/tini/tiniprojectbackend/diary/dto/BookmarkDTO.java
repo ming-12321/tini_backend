@@ -14,12 +14,14 @@ import lombok.experimental.SuperBuilder;
 public class BookmarkDTO extends BaseDTO {
 
   protected int bookmarkId;
-  protected int pageId;
+  protected String name;
+  protected int themeSavePath;
 
   public static BookmarkDTO from(BookmarkEntity bookmarkEntity) {
     return BookmarkDTO.builder()
         .bookmarkId(bookmarkEntity.getBookmarkId())
-        .pageId(bookmarkEntity.getPage().getPageId())
+        .name(bookmarkEntity.getName())
+        .themeSavePath(bookmarkEntity.getThemeSavePath())
         .createdAt(bookmarkEntity.getCreatedAt())
         .updatedAt(bookmarkEntity.getUpdatedAt())
         .build();

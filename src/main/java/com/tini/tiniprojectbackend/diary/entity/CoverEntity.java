@@ -35,7 +35,7 @@ public class CoverEntity extends BaseEntity {
   private int themeSavePath;
 
   @Builder(builderMethodName = "createCoverBuilder", builderClassName = "createCoverBuilder")
-  public CoverEntity(CoverDTO coverDTO, DiaryDTO diaryDTO) {
+  public CoverEntity(CoverDTO coverDTO) {
     this.name = coverDTO.getName();
     this.themeSavePath = coverDTO.getThemeSavePath();
   }

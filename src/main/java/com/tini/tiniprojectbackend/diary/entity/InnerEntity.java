@@ -36,9 +36,9 @@ public class InnerEntity extends BaseEntity {
 
 
   @Builder(builderMethodName = "createPageBuilder", builderClassName = "createPageBuilder")
-  public InnerEntity(InnerDTO pageDTO, DiaryDTO diaryDTO) {
-    this.name = pageDTO.getName();
-    this.themeSavePath = pageDTO.getThemeSavePath();
+  public InnerEntity(InnerDTO innerDTO) {
+    this.name = innerDTO.getName();
+    this.themeSavePath = innerDTO.getThemeSavePath();
   }
 
 }

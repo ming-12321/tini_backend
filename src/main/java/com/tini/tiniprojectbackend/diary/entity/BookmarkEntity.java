@@ -28,13 +28,16 @@ public class BookmarkEntity extends BaseEntity {
   @Column(name = "BOOKMARK_ID")
   private int bookmarkId;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "PAGE_ID", nullable = false)
-  private PageEntity page;
+  @Column(name = "NAME")
+  private String name;
+
+  @Column(name = "THEME_SAVE_PATH", nullable = false)
+  private int themeSavePath;
 
   @Builder(builderMethodName = "createBookmarkBuilder", builderClassName = "createBookmarkBuilder")
-  public BookmarkEntity(BookmarkDTO bookmarkDTO, PageDTO pageDTO) {
-    this.page = PageEntity.builder().pageId(pageDTO.getPageId()).build();
+  public BookmarkEntity(BookmarkDTO bookmarkDTO) {
+    this.name = bookmarkDTO.getName();
+    this.themeSavePath = bookmarkDTO.getThemeSavePath();
   }
 
 }
