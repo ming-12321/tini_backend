@@ -15,18 +15,16 @@ import lombok.experimental.SuperBuilder;
 public class PageDTO extends BaseDTO {
 
   protected int pageId;
-  protected int innerThemeId;
-  protected int coverThemeId;
-  protected int diaryId;
+  protected ThemeDTO theme;
+  protected DiaryDTO diary;
   protected int diaryPage;
   protected PageType pageType;
 
   public static PageDTO from(PageEntity pageEntity) {
     return PageDTO.builder()
         .pageId(pageEntity.getPageId())
-        .innerThemeId(pageEntity.getInner() != null ? pageEntity.getInner().getInnerThemeId() : 0)
-        .coverThemeId(pageEntity.getCover() != null ? pageEntity.getCover().getCoverThemeId() : 0)
-        .diaryId(pageEntity.getDiary().getDiaryId())
+        .theme(pageEntity.getTheme() != null ? ThemeDTO.from(pageEntity.getTheme()) : null)
+        .diary(DiaryDTO.from(pageEntity.getDiary()))
         .diaryPage(pageEntity.getDiaryPage())
         .pageType(pageEntity.getPageType())
         .createdAt(pageEntity.getCreatedAt())

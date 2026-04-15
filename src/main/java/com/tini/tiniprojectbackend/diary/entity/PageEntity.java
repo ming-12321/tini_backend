@@ -1,9 +1,10 @@
 package com.tini.tiniprojectbackend.diary.entity;
 
 import com.tini.tiniprojectbackend.common.entity.BaseEntity;
-import com.tini.tiniprojectbackend.diary.dto.DiaryDTO;
 import com.tini.tiniprojectbackend.diary.dto.PageDTO;
+import com.tini.tiniprojectbackend.diary.dto.ThemeDTO;
 import com.tini.tiniprojectbackend.diary.enumeration.PageType;
+import com.tini.tiniprojectbackend.user.dto.UserDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,12 +33,8 @@ public class PageEntity extends BaseEntity {
   private int pageId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "INNER_THEME_ID")
-  private InnerEntity inner;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "COVER_THEME_ID")
-  private CoverEntity cover;
+  @JoinColumn(name = "THEME_ID")
+  private ThemeEntity theme;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "DIARY_ID", nullable = false)
@@ -51,14 +48,16 @@ public class PageEntity extends BaseEntity {
   private PageType pageType;
 
   @Builder(builderMethodName = "createPageBuilder", builderClassName = "createPageBuilder")
-  public PageEntity(PageDTO pageDTO, DiaryDTO diaryDTO) {
-    this.inner = pageDTO.getInnerThemeId() != 0
-        ? InnerEntity.builder().innerThemeId(pageDTO.getInnerThemeId()).build() : null;
-    this.cover = pageDTO.getCoverThemeId() != 0
-        ? CoverEntity.builder().coverThemeId(pageDTO.getCoverThemeId()).build() : null;
-    this.diary = DiaryEntity.builder().diaryId(diaryDTO.getDiaryId()).build();
+  public PageEntity(PageDTO pageDTO, UserDTO userDTO) {
+    this.theme = pageDTO.getTheme() != null
+        ? ThemeEntity.createThemeBuilder().themeDTO(pageDTO.getTheme()).build() : null;
+    this.diary = DiaryEntity.createDiaryBuilder().diaryDTO(pageDTO.getDiary()).userDTO(userDTO).build();
     this.diaryPage = pageDTO.getDiaryPage();
     this.pageType = pageDTO.getPageType();
+  }
+
+  public void updateTheme(ThemeDTO themeDTO) {
+    this.theme = ThemeEntity.createThemeBuilder().themeDTO(themeDTO).build();
   }
 
 }

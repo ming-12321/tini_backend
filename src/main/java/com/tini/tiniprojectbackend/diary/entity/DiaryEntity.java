@@ -58,9 +58,6 @@ public class DiaryEntity extends BaseEntity {
   @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<IndexEntity>  indexEntities;
 
-  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-  private List<BookmarkEntity>  bookmarkEntities;
-
   @Builder(builderMethodName = "createDiaryBuilder", builderClassName = "createDiaryBuilder")
   public DiaryEntity(DiaryDTO diaryDTO, UserDTO userDTO) {
     this.name = diaryDTO.getName();
