@@ -1,11 +1,8 @@
 package com.tini.tiniprojectbackend.diary.entity;
 
 import com.tini.tiniprojectbackend.common.entity.BaseEntity;
-import com.tini.tiniprojectbackend.diary.dto.BookmarkDTO;
-import com.tini.tiniprojectbackend.diary.dto.CoverDTO;
-import com.tini.tiniprojectbackend.diary.dto.DiaryDTO;
-import com.tini.tiniprojectbackend.diary.dto.InnerDTO;
 import com.tini.tiniprojectbackend.diary.dto.PageDTO;
+import com.tini.tiniprojectbackend.diary.dto.ThemeDTO;
 import com.tini.tiniprojectbackend.diary.enumeration.PageType;
 import com.tini.tiniprojectbackend.user.dto.UserDTO;
 import jakarta.persistence.Column;
@@ -36,16 +33,8 @@ public class PageEntity extends BaseEntity {
   private int pageId;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "INNER_THEME_ID")
-  private InnerEntity inner;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "COVER_THEME_ID")
-  private CoverEntity cover;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "BOOKMARK_ID")
-  private BookmarkEntity bookmark;
+  @JoinColumn(name = "THEME_ID")
+  private ThemeEntity theme;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "DIARY_ID", nullable = false)
@@ -60,28 +49,15 @@ public class PageEntity extends BaseEntity {
 
   @Builder(builderMethodName = "createPageBuilder", builderClassName = "createPageBuilder")
   public PageEntity(PageDTO pageDTO, UserDTO userDTO) {
-    this.inner = pageDTO.getInnerTheme() != null
-        ? InnerEntity.createPageBuilder().innerDTO(pageDTO.getInnerTheme()).build() : null;
-    this.cover = pageDTO.getCoverTheme() != null
-        ? CoverEntity.createCoverBuilder().coverDTO(pageDTO.getCoverTheme()).build() : null;
-    this.bookmark = pageDTO.getBookmark() != null
-        ? BookmarkEntity.createBookmarkBuilder().bookmarkDTO(pageDTO.getBookmark()).build() : null;
+    this.theme = pageDTO.getTheme() != null
+        ? ThemeEntity.createThemeBuilder().themeDTO(pageDTO.getTheme()).build() : null;
     this.diary = DiaryEntity.createDiaryBuilder().diaryDTO(pageDTO.getDiary()).userDTO(userDTO).build();
     this.diaryPage = pageDTO.getDiaryPage();
     this.pageType = pageDTO.getPageType();
   }
 
-
-  public void updateInner(InnerDTO innerDTO) {
-    this.inner = InnerEntity.createPageBuilder().innerDTO(innerDTO).build();
-  }
-
-  public void updateCover(CoverDTO coverDTO) {
-    this.cover = CoverEntity.createCoverBuilder().coverDTO(coverDTO).build();
-  }
-
-  public void updateBookmark(BookmarkDTO bookmarkDTO) {
-    this.bookmark = BookmarkEntity.createBookmarkBuilder().bookmarkDTO(bookmarkDTO).build();
+  public void updateTheme(ThemeDTO themeDTO) {
+    this.theme = ThemeEntity.createThemeBuilder().themeDTO(themeDTO).build();
   }
 
 }

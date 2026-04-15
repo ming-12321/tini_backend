@@ -41,17 +41,7 @@ public class PageService {
 
     PageEntity pageById = pageRepository.getPageById(pageDTO.getPageId());
 
-    switch (pageDTO.getPageType()) {
-      case BOOKMARK:
-        pageById.updateBookmark(pageDTO.getBookmark());
-        break;
-      case INNER:
-        pageById.updateInner(pageDTO.getInnerTheme());
-        break;
-      case COVER:
-        pageById.updateCover(pageDTO.getCoverTheme());
-        break;
-    }
+    pageById.updateTheme(pageDTO.getTheme());
   }
 
   /**
