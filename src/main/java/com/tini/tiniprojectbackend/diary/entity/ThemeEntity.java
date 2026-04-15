@@ -5,6 +5,8 @@ import com.tini.tiniprojectbackend.diary.dto.ThemeDTO;
 import com.tini.tiniprojectbackend.diary.enumeration.PageType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,6 +34,7 @@ public class ThemeEntity extends BaseEntity {
   private String themeSavePath;
 
   @Column(name = "PAGE_TYPE")
+  @Enumerated(EnumType.STRING)
   private PageType pageType;
 
   @Builder(builderMethodName = "createThemeBuilder", builderClassName = "createThemeBuilder")
