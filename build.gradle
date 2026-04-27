@@ -48,6 +48,9 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    // jsch
+    implementation group: 'com.jcraft', name: 'jsch', version: '0.1.55'
+    implementation group: 'com.github.mwiede', name: 'jsch', version: '0.2.9'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
