@@ -30,6 +30,12 @@ jwt:
   access_expiration: 1800000
   refresh_expiration: 7776000000
 
+ssh:
+  port: 22
+  hostname: 3.37.104.158
+  username: ec2-user
+  password: Tini2@2b
+
 # 소셜 로그인 API 설정
 social:
   kakao:
