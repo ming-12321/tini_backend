@@ -3,6 +3,7 @@ package com.tini.tiniprojectbackend.diary.entity;
 import com.tini.tiniprojectbackend.common.entity.BaseEntity;
 import com.tini.tiniprojectbackend.diary.dto.DiaryDTO;
 import com.tini.tiniprojectbackend.diary.enumeration.Position;
+import com.tini.tiniprojectbackend.template.entity.TemplateDiaryEntity;
 import com.tini.tiniprojectbackend.user.dto.UserDTO;
 import com.tini.tiniprojectbackend.user.entity.UserEntity;
 import jakarta.persistence.CascadeType;
@@ -57,6 +58,9 @@ public class DiaryEntity extends BaseEntity {
 
   @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<IndexEntity>  indexEntities;
+
+  @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+  private List<TemplateDiaryEntity> templateDiaryEntities;
 
   @Builder(builderMethodName = "createDiaryBuilder", builderClassName = "createDiaryBuilder")
   public DiaryEntity(DiaryDTO diaryDTO, UserDTO userDTO) {
