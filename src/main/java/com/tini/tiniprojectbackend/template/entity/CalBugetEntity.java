@@ -1,8 +1,11 @@
 package com.tini.tiniprojectbackend.template.entity;
 
 import com.tini.tiniprojectbackend.common.entity.BaseEntity;
+import com.tini.tiniprojectbackend.template.enumeration.Period;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,7 +31,8 @@ public class CalBugetEntity extends BaseEntity {
   @Column(name = "BUDGET")
   private int budget;
   @Column(name = "PERIOD")
-  private String period;
+  @Enumerated(EnumType.STRING)
+  private Period period;
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "TP_COMMON_ID")
   private TemplateCommonEntity templateCommon;

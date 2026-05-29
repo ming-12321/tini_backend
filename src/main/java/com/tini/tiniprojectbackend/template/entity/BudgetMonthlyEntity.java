@@ -1,6 +1,7 @@
 package com.tini.tiniprojectbackend.template.entity;
 
 import com.tini.tiniprojectbackend.common.entity.BaseEntity;
+import com.tini.tiniprojectbackend.template.enumeration.BugetCategory;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -29,7 +30,7 @@ public class BudgetMonthlyEntity extends BaseEntity {
   private int id;
   @Column(name = "CATEGORY")
   @Enumerated(EnumType.STRING)
-  private String category;
+  private BugetCategory category;
   @Column(name = "TOTAL")
   private int total;
   @ManyToOne(fetch = FetchType.LAZY)
