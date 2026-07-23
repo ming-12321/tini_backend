@@ -108,6 +108,12 @@ public class UserEntity {
     this.socialId = userDTO.getSocialId();
   }
 
+  public void updateProfile(String userNick, Gender userGender, LocalDateTime userBirthDate) {
+    if (userNick != null) this.userNick = userNick;
+    if (userGender != null) this.userGender = userGender;
+    if (userBirthDate != null) this.userBirthDate = userBirthDate;
+  }
+
   public void withdraw() {
     this.userId = "withdrawn_" + this.userUuid;
     this.userNick = "탈퇴한 사용자";

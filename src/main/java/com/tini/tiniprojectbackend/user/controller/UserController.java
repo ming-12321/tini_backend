@@ -1,6 +1,7 @@
 package com.tini.tiniprojectbackend.user.controller;
 
 import com.tini.tiniprojectbackend.common.util.JWTUtil;
+import com.tini.tiniprojectbackend.user.dto.ProfileUpdateDTO;
 import com.tini.tiniprojectbackend.user.dto.TokenDTO;
 import com.tini.tiniprojectbackend.user.dto.UserDTO;
 import com.tini.tiniprojectbackend.user.repository.UserRepository;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +48,25 @@ public class UserController {
   @PostMapping("/google/login")
   public ResponseEntity<TokenDTO> googleLogin(@RequestBody TokenDTO tokenDTO) {
     return new ResponseEntity<>(socialService.processGoogleLogin(tokenDTO),HttpStatus.OK);
+  }
+
+  /**
+   * 회원가입 후 프로필(닉네임/생년월일/성별) 확정
+   * @param request HttpServletRequest (JWT에서 userUuid 추출)
+   * @param profileUpdateDTO 프로필 입력값
+   * @return 처리 결과
+   */
+  @PatchMapping("/profile")
+  public ResponseEntity<String> updateProfile(
+      HttpServletRequest request,
+      @RequestBody ProfileUpdateDTO profileUpdateDTO
+  ) {
+    String authorization = request.getHeader("Authorization");
+    String accessToken = authorization.replace("Bearer ", "").trim();
+    String userUuid = jwtUtil.getUserUuidFromToken(accessToken);
+
+    userService.updateProfile(userUuid, profileUpdateDTO);
+    return ResponseEntity.ok("프로필이 저장되었습니다.");
   }
 
   /**
