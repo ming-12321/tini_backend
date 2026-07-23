@@ -60,7 +60,10 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     // 제외 목록이 아닌 경우에만 토큰 추출 및 검증
-    String accessToken = request.getHeader("Authorization");
+    String authorizationHeader = request.getHeader("Authorization");
+    String accessToken = authorizationHeader != null
+        ? authorizationHeader.replace("Bearer ", "").trim()
+        : null;
     String refreshToken = request.getHeader("RefreshToken");
 
     if (accessToken == null || accessToken.isEmpty()) {

@@ -96,6 +96,7 @@ public class SocialService {
         return TokenDTO.builder()
             .accessToken(jwtAccessToken)
             .refreshToken(jwtRefreshToken)
+            .user(userDTO)
             .build();
 
     } catch (Exception e) {
@@ -201,6 +202,7 @@ public class SocialService {
       return TokenDTO.builder()
           .accessToken(jwtAccessToken)
           .refreshToken(jwtRefreshToken)
+          .user(userDTO)
           .build();
 
     } catch (Exception e) {
@@ -397,7 +399,7 @@ public class SocialService {
     if(StringUtils.isNotBlank(gender)) {
       return Gender.valueOf(gender.toUpperCase());
     }  else {
-      return Gender.MALE;
+      return null;
     }
   }
 
